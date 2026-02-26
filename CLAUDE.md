@@ -107,6 +107,7 @@ Data persisted to `{userData}/time-tracker-data.json`:
 ## Running the App
 
 ```bash
+npm install      # Install dependencies (required after first clone or pulling new changes)
 npm run dev      # Start Vite + Electron in dev mode
 npm run build    # Build for production
 npm run electron # Run Electron only (requires built frontend)
