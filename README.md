@@ -27,3 +27,11 @@ Output will be in the `release/` folder:
 - **Windows:** `Clock Setup 1.0.0.exe`
 
 > Note: To build a Windows installer you must run `npm run package` on a Windows machine, and vice versa for Mac.
+
+## Installing the App (Security Warnings)
+
+Since the app is unsigned, both Mac and Windows will show a warning the first time you open it.
+
+**Mac:** Right-click the `.dmg` → Open → click "Open" in the dialog. Only needed once.
+
+**Windows:** When running the `.exe` installer, click "More info" on the SmartScreen popup, then click "Run anyway". Only needed once.
