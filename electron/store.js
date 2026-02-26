@@ -1,4 +1,4 @@
-import { app } from 'electron'
+import { app, safeStorage } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import crypto from 'crypto'
@@ -61,6 +61,25 @@ export function createStore() {
       fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2), 'utf-8')
     } catch (error) {
       console.error('Error writing data file:', error)
+    }
+  }
+
+  function encryptTokens(tokens) {
+    if (!tokens) return null
+    if (!safeStorage.isEncryptionAvailable()) return tokens
+    const encrypted = safeStorage.encryptString(JSON.stringify(tokens))
+    return { __encrypted: encrypted.toString('base64') }
+  }
+
+  function decryptTokens(stored) {
+    if (!stored) return null
+    if (!stored.__encrypted) return stored // legacy plaintext — still readable
+    if (!safeStorage.isEncryptionAvailable()) return null
+    try {
+      const json = safeStorage.decryptString(Buffer.from(stored.__encrypted, 'base64'))
+      return JSON.parse(json)
+    } catch {
+      return null
     }
   }
 
@@ -221,11 +240,11 @@ export function createStore() {
     },
 
     getMicrosoftTokens() {
-      return getMicrosoftConfig().tokens
+      return decryptTokens(getMicrosoftConfig().tokens)
     },
 
     setMicrosoftTokens(tokens) {
-      return updateMicrosoftConfig({ tokens })
+      return updateMicrosoftConfig({ tokens: encryptTokens(tokens) })
     },
 
     getMicrosoftCodeVerifier() {
