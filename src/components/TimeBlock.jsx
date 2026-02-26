@@ -3,7 +3,7 @@ import { useTime } from '../context/TimeContext'
 import { formatTime, formatDuration } from '../utils/time'
 import './TimeBlock.css'
 
-function TimeBlock({ entry, isActive = false, onClick, position }) {
+function TimeBlock({ entry, isActive = false, onClick, onDragStart, isDragging = false, position }) {
   const { getCategoryById } = useTime()
   const category = entry.categoryId ? getCategoryById(entry.categoryId) : null
 
@@ -35,17 +35,23 @@ function TimeBlock({ entry, isActive = false, onClick, position }) {
     return formatDuration(entry.startTime, entry.endTime)
   }, [entry.startTime, entry.endTime])
 
+  const handleMouseDown = (e) => {
+    if (isActive || !onDragStart || e.button !== 0) return
+    const columnEl = e.currentTarget.closest('.week-day-content')
+    if (columnEl) onDragStart(e, columnEl)
+  }
+
   const handleClick = (e) => {
     e.stopPropagation()
-    console.log('TimeBlock clicked', entry.id)
-    if (onClick) onClick()
+    if (onClick && !isDragging) onClick()
   }
 
   return (
     <div
-      className={`time-block ${isActive ? 'active' : ''}`}
+      className={`time-block ${isActive ? 'active' : ''} ${isDragging ? 'dragging' : ''}`}
       style={style}
       onClick={handleClick}
+      onMouseDown={handleMouseDown}
       title={`${entry.description || 'No description'}\n${timeRange}\n${duration}`}
     >
       <div className="time-block-content">

@@ -3,7 +3,7 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 4px;
   padding: 4px 6px;
-  cursor: pointer;
+  cursor: grab;
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
   z-index: 10;
@@ -11,10 +11,19 @@
   box-sizing: border-box;
 }
 
-.time-block:hover {
+.time-block:not(.dragging):hover {
   transform: scale(1.02);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-  z-index: 2;
+  z-index: 20;
+}
+
+.time-block.dragging {
+  cursor: grabbing;
+  opacity: 0.85;
+  transition: none;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
 }
 
 .time-block.active {

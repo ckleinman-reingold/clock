@@ -1,10 +1,11 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import { useTime } from '../context/TimeContext'
 import {
   formatDate,
   isSameDay,
   formatTotalDuration,
   getEntryPositions,
+  getTimePosition,
 } from '../utils/time'
 import TimeBlock from './TimeBlock'
 import EditModal from './EditModal'
@@ -44,10 +45,14 @@ function isWithinWorkWeek(date, weekStart, weekEnd) {
 }
 
 function WeekView() {
-  const { entries, activeEntry, loading, categories, getCategoryById } = useTime()
+  const { entries, activeEntry, loading, categories, getCategoryById, updateEntry } = useTime()
   const [currentDate, setCurrentDate] = useState(new Date())
   const [editingEntry, setEditingEntry] = useState(null)
   const [showAddModal, setShowAddModal] = useState(false)
+  const [draggingEntryId, setDraggingEntryId] = useState(null)
+  const [draggedStart, setDraggedStart] = useState(null)
+  const draggedStartRef = useRef(null)
+  const justFinishedDragRef = useRef(false)
   const weekStart = useMemo(() => getWorkWeekStart(currentDate), [currentDate])
   const weekEnd = useMemo(() => getWorkWeekEnd(currentDate), [currentDate])
   const weekDays = useMemo(() => getWorkWeekDays(weekStart), [weekStart])
@@ -180,6 +185,59 @@ function WeekView() {
       .sort((a, b) => b.duration - a.duration)
   }
 
+  const handleDragStart = (e, entry, blockTop, columnEl) => {
+    e.preventDefault()
+    const colRect = columnEl.getBoundingClientRect()
+    const grabOffsetPercent = (e.clientY - colRect.top) / colRect.height * 100 - blockTop
+    const duration = new Date(entry.endTime) - new Date(entry.startTime)
+
+    setDraggingEntryId(entry.id)
+    setDraggedStart(entry.startTime)
+    draggedStartRef.current = entry.startTime
+    document.body.style.cursor = 'grabbing'
+    document.body.style.userSelect = 'none'
+
+    const onMove = (moveE) => {
+      const rect = columnEl.getBoundingClientRect()
+      const mousePercent = (moveE.clientY - rect.top) / rect.height * 100
+      let newTopPercent = mousePercent - grabOffsetPercent
+      // Convert percent to minutes from midnight (0% = 7AM, 100% = 7PM = 720 min range)
+      let newStartMinutes = 7 * 60 + (newTopPercent / 100) * 720
+      // Snap to 15 min
+      newStartMinutes = Math.round(newStartMinutes / 15) * 15
+      // Clamp so block stays within 7AM-7PM
+      const durationMinutes = duration / (1000 * 60)
+      newStartMinutes = Math.max(7 * 60, Math.min(19 * 60 - durationMinutes, newStartMinutes))
+      // Preserve the original date, only update time
+      const newStart = new Date(entry.startTime)
+      newStart.setHours(Math.floor(newStartMinutes / 60), newStartMinutes % 60, 0, 0)
+      draggedStartRef.current = newStart.toISOString()
+      setDraggedStart(newStart.toISOString())
+    }
+
+    const onUp = async () => {
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseup', onUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+      setDraggingEntryId(null)
+      setDraggedStart(null)
+      if (draggedStartRef.current !== entry.startTime) {
+        justFinishedDragRef.current = true
+        setTimeout(() => { justFinishedDragRef.current = false }, 0)
+        const newStart = new Date(draggedStartRef.current)
+        const newEnd = new Date(newStart.getTime() + duration)
+        await updateEntry(entry.id, {
+          startTime: newStart.toISOString(),
+          endTime: newEnd.toISOString(),
+        })
+      }
+    }
+
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseup', onUp)
+  }
+
   if (loading) {
     return <div className="week-view-loading">Loading...</div>
   }
@@ -257,20 +315,28 @@ function WeekView() {
                 {hours.map(hour => (
                   <div key={hour} className="week-hour-cell"></div>
                 ))}
-                {getPositionedEntriesForDay(day).map(entry => (
-                  <TimeBlock
-                    key={entry.id}
-                    entry={entry}
-                    isActive={entry.isActive}
-                    position={{
-                      top: entry.top,
-                      height: entry.height,
-                      column: entry.column,
-                      totalColumns: entry.totalColumns,
-                    }}
-                    onClick={() => setEditingEntry(entry)}
-                  />
-                ))}
+                {getPositionedEntriesForDay(day).map(entry => {
+                  const isDragging = draggingEntryId === entry.id
+                  const top = isDragging && draggedStart
+                    ? getTimePosition(draggedStart, 7, 19, false)
+                    : entry.top
+                  return (
+                    <TimeBlock
+                      key={entry.id}
+                      entry={entry}
+                      isActive={entry.isActive}
+                      isDragging={isDragging}
+                      position={{
+                        top,
+                        height: entry.height,
+                        column: entry.column,
+                        totalColumns: entry.totalColumns,
+                      }}
+                      onClick={() => { if (!justFinishedDragRef.current) setEditingEntry(entry) }}
+                      onDragStart={!entry.isActive ? (e, columnEl) => handleDragStart(e, entry, entry.top, columnEl) : undefined}
+                    />
+                  )
+                })}
               </div>
             </div>
           ))}

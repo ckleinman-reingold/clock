@@ -6,16 +6,34 @@
   flex-direction: column;
   transition: width 0.3s ease;
   overflow: hidden;
+  position: relative;
+}
+
+.category-panel.resizing {
+  transition: none;
 }
 
 .category-panel.open {
-  width: 260px;
-  min-width: 260px;
+  min-width: 160px;
 }
 
 .category-panel.closed {
   width: 48px;
   min-width: 48px;
+}
+
+.category-resize-handle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  cursor: ew-resize;
+  z-index: 10;
+}
+
+.category-resize-handle:hover {
+  background: rgba(102, 126, 234, 0.2);
 }
 
 .category-panel-toggle {

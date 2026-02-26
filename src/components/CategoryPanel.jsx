@@ -45,6 +45,8 @@ function CategoryPanel() {
     return totals
   }, [entries, activeEntry])
   const [isOpen, setIsOpen] = useState(true)
+  const [width, setWidth] = useState(260)
+  const [isResizing, setIsResizing] = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [editName, setEditName] = useState('')
   const [editColor, setEditColor] = useState('')
@@ -85,8 +87,37 @@ function CategoryPanel() {
     }
   }
 
+  const handleResizeStart = (e) => {
+    e.preventDefault()
+    const startX = e.clientX
+    const startWidth = width
+    setIsResizing(true)
+    document.body.style.cursor = 'ew-resize'
+    document.body.style.userSelect = 'none'
+
+    const onMove = (e) => {
+      const newWidth = Math.min(Math.max(startWidth + (startX - e.clientX), 160), 600)
+      setWidth(newWidth)
+    }
+    const onUp = () => {
+      setIsResizing(false)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseup', onUp)
+    }
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseup', onUp)
+  }
+
   return (
-    <div className={`category-panel ${isOpen ? 'open' : 'closed'}`}>
+    <div
+      className={`category-panel ${isOpen ? 'open' : 'closed'} ${isResizing ? 'resizing' : ''}`}
+      style={isOpen ? { width: `${width}px` } : undefined}
+    >
+      {isOpen && (
+        <div className="category-resize-handle" onMouseDown={handleResizeStart} />
+      )}
       <button
         className="category-panel-toggle"
         onClick={() => setIsOpen(!isOpen)}
