@@ -1,0 +1,46 @@
+{
+  "name": "clock",
+  "version": "1.0.0",
+  "description": "Time Tracker Desktop App",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently \"vite\" \"sleep 2 && electron .\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "electron": "electron .",
+    "package": "vite build && electron-builder"
+  },
+  "build": {
+    "appId": "com.clock.timetracker",
+    "productName": "Clock",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*"
+    ],
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.3",
+    "concurrently": "^9.2.1",
+    "electron": "^40.1.0",
+    "electron-builder": "^26.7.0",
+    "uuid": "^13.0.0",
+    "vite": "^7.3.1"
+  }
+}

@@ -1,0 +1,251 @@
+.ms-settings-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.ms-settings {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.ms-settings-loading {
+  padding: 3rem;
+  text-align: center;
+  color: #666;
+}
+
+.ms-settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ms-settings-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ms-settings-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: background 0.2s, color 0.2s;
+}
+
+.ms-settings-close:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.ms-settings-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+.ms-settings-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.ms-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ms-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #666;
+}
+
+.ms-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ms-input {
+  flex: 1;
+  padding: 0.625rem 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+
+.ms-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.ms-select {
+  padding: 0.625rem 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: white;
+  cursor: pointer;
+}
+
+.ms-select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.ms-btn {
+  padding: 0.625rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  border: none;
+}
+
+.ms-btn:active {
+  transform: scale(0.98);
+}
+
+.ms-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ms-btn.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.ms-btn.primary:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.ms-btn.secondary {
+  background: #f5f5f5;
+  color: #333;
+  border: 1px solid #e0e0e0;
+}
+
+.ms-btn.secondary:hover:not(:disabled) {
+  background: #ebebeb;
+}
+
+.ms-btn.danger {
+  background: white;
+  color: #f5576c;
+  border: 1px solid #f5576c;
+}
+
+.ms-btn.danger:hover {
+  background: #f5576c;
+  color: white;
+}
+
+.ms-connected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.ms-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ms-profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ms-profile-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.ms-profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.ms-profile-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.ms-profile-email {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.ms-hint {
+  font-size: 0.75rem;
+  color: #999;
+  margin: 0;
+}
+
+.ms-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.ms-checkbox-label input {
+  width: 16px;
+  height: 16px;
+  accent-color: #667eea;
+}
+
+.ms-error {
+  color: #f5576c;
+  font-size: 0.875rem;
+  padding: 0.5rem;
+  background: rgba(245, 87, 108, 0.1);
+  border-radius: 6px;
+  margin: 0;
+}
+
+.ms-success {
+  color: #43a047;
+  font-size: 0.875rem;
+  margin: 0.5rem 0 0 0;
+}
